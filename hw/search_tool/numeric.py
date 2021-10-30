@@ -1,5 +1,9 @@
+# 201645825 이승윤
 import random
+import math
 
+DELTA = 0.01   # Mutation step size
+NumEval = 0    # Total number of evaluations
 
 def createProblem():  ###
     ## Read in an expression and its domain from a file.
@@ -34,6 +38,21 @@ def randomInit(p):  ###
     init = [random.uniform(p[1][1][i], p[1][2][i]) for i in range(0, len(p[1][0]))]
     return init  # Return a random initial point
     # as a list of values
+
+
+
+def evaluate(current, p):
+    ## Evaluate the expression of 'p' after assigning
+    ## the values of 'current' to the variables
+    global NumEval
+    NumEval += 1
+
+    expr = p[0]         # p[0] is function expression
+    varNames = p[1][0]  # p[1] is domain: [varNames, low, up]
+    for i in range(len(varNames)):
+        assignment = varNames[i] + '=' + str(current[i])
+        exec(assignment)
+    return eval(expr)
 
 
 
@@ -74,11 +93,11 @@ def displaySetting(algorithm, delta):
     print("Mutation step size:", delta)
 
 
-def displayResult(solution, minimum, numEval):
+def displayResult(solution, minimum):
     print()
     print("Solution found:")
     print(coordinate(solution))  # Convert list to tuple
     print("Minimum value: {0:,.3f}".format(minimum))
     print()
-    print("Total number of evaluations: {0:,}".format(numEval))
+    print("Total number of evaluations: {0:,}".format(NumEval))
 

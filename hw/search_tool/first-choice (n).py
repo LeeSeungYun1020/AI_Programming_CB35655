@@ -1,9 +1,7 @@
+# 201645825 이승윤
 from numeric import *
-import math
 
-DELTA = 0.01   # Mutation step size
-LIMIT_STUCK = 100 # Max number of evaluations enduring no improvement
-NumEval = 0    # Total number of evaluations
+LIMIT_STUCK = 100  # Max number of evaluations enduring no improvement
 
 
 def main():
@@ -15,7 +13,7 @@ def main():
     describeProblem(p)
     displaySetting("First-Choice Hill Climbing", DELTA)
     # Report results
-    displayResult(solution, minimum, NumEval)
+    displayResult(solution, minimum)
 
 
 def firstChoice(p):
@@ -34,24 +32,10 @@ def firstChoice(p):
     return current, valueC
 
 
-
-def evaluate(current, p):
-    ## Evaluate the expression of 'p' after assigning
-    ## the values of 'current' to the variables
-    global NumEval
-    NumEval += 1
-    expr = p[0]         # p[0] is function expression
-    varNames = p[1][0]  # p[1] is domain: [varNames, low, up]
-    for i in range(len(varNames)):
-        assignment = varNames[i] + '=' + str(current[i])
-        exec(assignment)
-    return eval(expr)
-
-
 def randomMutant(current, p): ###
     i = random.randint(0, len(p[1][0]) - 1)
     d = random.choice([DELTA, -DELTA])
-    return mutate(current, i, d, p) # Return a random successor
+    return mutate(current, i, d, p)  # Return a random successor
 
 
 main()

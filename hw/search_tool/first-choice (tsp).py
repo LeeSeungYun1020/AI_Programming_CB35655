@@ -1,9 +1,7 @@
-import random
-import math
+# 201645825 이승윤
 from tsp import *
 
 LIMIT_STUCK = 100 # Max number of evaluations enduring no improvement
-NumEval = 0    # Total number of evaluations
 
 
 def main():
@@ -15,7 +13,7 @@ def main():
     describeProblem(p)
     displaySetting("First-Choice Hill Climbing")
     # Report results
-    displayResult(solution, minimum, NumEval)
+    displayResult(solution, minimum)
 
 
 def firstChoice(p):
@@ -32,20 +30,6 @@ def firstChoice(p):
         else:
             i += 1
     return current, valueC
-
-
-def evaluate(current, p): ###
-    ## Calculate the tour cost of 'current'
-    ## 'p' is a Problem instance
-    ## 'current' is a list of city ids
-    global NumEval
-    NumEval += 1
-
-    table = p[2]
-    cost = 0
-    for i in range(len(current) - 1):
-        cost += table[current[i]][current[i + 1]]
-    return cost
 
 
 def randomMutant(current, p): # Apply inversion
