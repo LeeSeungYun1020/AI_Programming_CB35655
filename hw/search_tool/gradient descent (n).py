@@ -7,7 +7,7 @@ def main():
     # Create an instance of numerical optimization problem
     n.createProblem()
     # Call the search algorithm
-    n.steepestAscent()
+    n.gradientDescent()
     # Show the problem and algorithm settings
     n.describeProblem()
     n.displaySetting()
