@@ -20,12 +20,12 @@ def firstChoice(self, delta=0.01, limit_stuck=100):
     self._algorithm = "First-Choice Hill Climbing"
     self._delta = delta
 
-    current = self._randomInit()
-    valueC = self._evaluate(current)
+    current = self.randomInit()
+    valueC = self.evaluate(current)
     i = 0
     while i < limit_stuck:
-        successor = self._randomMutant(current)
-        valueS = self._evaluate(successor)
+        successor = self.randomMutant(current)
+        valueS = self.evaluate(successor)
         if valueS < valueC:
             current = successor
             valueC = valueS
@@ -39,11 +39,11 @@ def steepestAscent(self, delta=0.01):
     self._algorithm = "Steepest-Ascent Hill Climbing"
     self._delta = delta
 
-    current = self._randomInit()
-    valueC = self._evaluate(current)
+    current = self.randomInit()
+    valueC = self.evaluate(current)
     while True:
-        neighbors = self._mutants(current)
-        (successor, valueS) = self._bestOf(neighbors)
+        neighbors = self.mutants(current)
+        (successor, valueS) = self.bestOf(neighbors)
         if valueS >= valueC:
             break
         else:

@@ -16,6 +16,7 @@ def main():
     # Report results
     p.report()
 
+
 def firstChoice(p):
     current = p.randomInit() # Dictionary of {'var': value}
     valueC = p.evaluate(current)
@@ -30,6 +31,7 @@ def firstChoice(p):
         else:
             i += 1
     p.storeResult(current, valueC)
+
 
 def displaySetting():
     print()

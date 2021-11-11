@@ -27,14 +27,11 @@ def steepestAscent(p):
             valueC = valueS
     p.storeResult(current, valueC)
 
-def bestOf(neighbors, p):
-    best = neighbors[0]
-    bestValue = p.evaluate(best)
-    for i in range(1, len(neighbors)):
-        newValue = p.evaluate(neighbors[i])
-        if newValue < bestValue:
-            best = neighbors[i]
-            bestValue = newValue
+
+def bestOf(self, neighbors):
+    evals = [self.evaluate(n) for n in neighbors]
+    bestValue = min(evals)
+    best = neighbors[evals.index(bestValue)]
     return best, bestValue
 
 def displaySetting():
