@@ -16,44 +16,26 @@ def main():
 
 
 def gradientDescent(p):
-    currentP = p.randomInit()  # Current point
-    valueC = p.evaluate(currentP)
+    current = p.randomInit()  # Current point
+    current_value = p.evaluate(current)
+
     while True:
-        nextP = p.takeStep(currentP, valueC)
-        valueN = p.evaluate(nextP)
-        if valueN >= valueC:
+        next_point = p.takeStep(current, current_value)
+        next_value = p.evaluate(next_point)
+        if next_value >= current_value:
             break
         else:
-            currentP = nextP
-            valueC = valueN
-    p.storeResult(currentP, valueC)
-
-
-def gradientDescent(self, alpha=0.01, tol=0.00001, max_iteration=1000):
-    self._algorithm = "Gradient descent"
-    self._delta = alpha
-
-    current = np.array(self.randomInit())
-    valueC = self.evaluate(current)
-    step_size = 1
-    num_iteration = 0
-
-    while step_size > tol and num_iteration < max_iteration:
-        preview = current
-        valueP = valueC
-        current, valueC = self.takeStep(current)
-        step_size = abs(valueC - valueP)
-        num_iteration += 1
-
-    self._solution = current
-    self._objective_value = valueC
+            current = next_point
+            current_value = next_value
+    p.storeResult(current, current_value)
 
 
 def displaySetting(p):
     print()
     print("Search algorithm: Gradient Descent")
     print()
-    print("Udate rate:", p.getAlpha())
+    print("Update rate:", p.getAlpha())
     print("Increment for calculating derivative:", p.getDx())
+
 
 main()
