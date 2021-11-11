@@ -145,12 +145,13 @@ class Numeric(Problem):
         print()
         print("Solution found:")
         print(self.coordinate())  # Convert list to tuple
-        print("Minimum value: {0:,.3f}".format(self._objective_value))
+        print("Minimum value: {0:,.3f}".format(self._value))
         super().report()
 
     def coordinate(self):
         c = [round(value, 3) for value in self._solution]
         return tuple(c)  # Convert the list to a tuple
+
 
 class Tsp(Problem):
 

@@ -18,7 +18,7 @@ def main():
 
 
 def firstChoice(p):
-    current = p.randomInit() # Dictionary of {'var': value}
+    current = p.randomInit()  # Dictionary of {'var': value}
     valueC = p.evaluate(current)
     i = 0
     while i < LIMIT_STUCK:
@@ -38,5 +38,6 @@ def displaySetting():
     print("Search algorithm: First-Choice Hill Climbing")
     print("Max evaluations with no improvement: {0:,} iterations"
           .format(LIMIT_STUCK))
+
 
 main()

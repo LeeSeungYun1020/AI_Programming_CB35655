@@ -14,8 +14,9 @@ def main():
     # Report results
     p.report()
 
+
 def steepestAscent(p):
-    current = p.randomInit() # 'current' is a list of values
+    current = p.randomInit()  # 'current' is a list of values
     valueC = p.evaluate(current)
     while True:
         neighbors = p.mutants(current)
@@ -28,16 +29,18 @@ def steepestAscent(p):
     p.storeResult(current, valueC)
 
 
-def bestOf(self, neighbors):
-    evals = [self.evaluate(n) for n in neighbors]
+def bestOf(neighbors, p):
+    evals = [p.evaluate(n) for n in neighbors]
     bestValue = min(evals)
     best = neighbors[evals.index(bestValue)]
     return best, bestValue
+
 
 def displaySetting(p):
     print()
     print("Search algorithm: Steepest-Ascent Hill Climbing")
     print()
     print("Mutation step size:", p.getDelta())
+
 
 main()
