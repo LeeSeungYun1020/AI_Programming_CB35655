@@ -11,84 +11,40 @@ class Problem:
         # Solution (local min)
         self._solution = []
         # Cost
-        self._objective_value = 0
-        # Algorithm
-        self._algorithm = "undefined"
-        # Delta
-        self._delta = 0.01
-
-    def firstChoice(self, delta=0.01, limit_stuck=100):
-        self._algorithm = "First-Choice Hill Climbing"
-        self._delta = delta
-
-        current = self._randomInit()
-        valueC = self._evaluate(current)
-        i = 0
-        while i < limit_stuck:
-            successor = self._randomMutant(current)
-            valueS = self._evaluate(successor)
-            if valueS < valueC:
-                current = successor
-                valueC = valueS
-                i = 0  # Reset stuck counter
-            else:
-                i += 1
-        self._solution = current
-        self._objective_value = valueC
-
-    def steepestAscent(self, delta=0.01):
-        self._algorithm = "Steepest-Ascent Hill Climbing"
-        self._delta = delta
-
-        current = self._randomInit()
-        valueC = self._evaluate(current)
-        while True:
-            neighbors = self._mutants(current)
-            (successor, valueS) = self._bestOf(neighbors)
-            if valueS >= valueC:
-                break
-            else:
-                current = successor
-                valueC = valueS
-        self._solution = current
-        self._objective_value = valueC
+        self._value = 0
 
     @abstractmethod
-    def createProblem(self):
+    def setVariables(self):
         pass
 
     @abstractmethod
-    def describeProblem(self):
+    def randomInit(self):
         pass
 
-    def displaySetting(self):
-        print()
-        print("Search algorithm:", self._algorithm)
+    @abstractmethod
+    def evaluate(self):
+        pass
 
     @abstractmethod
-    def displayResult(self):
+    def mutants(self):
+        pass
+
+    @abstractmethod
+    def randomMutant(self, current):
+        pass
+
+    @abstractmethod
+    def describe(self):
+        pass
+
+    def storeResult(self, solution, value):
+        self._solution = solution
+        self._value = value
+
+    @abstractmethod
+    def report(self):
         print()
         print("Total number of evaluations: {0:,}".format(self._num_eval))
-
-    @abstractmethod
-    def _randomInit(self):
-        pass
-
-    @abstractmethod
-    def _evaluate(self, current):
-        pass
-
-    @abstractmethod
-    def _randomMutant(self, current):
-        pass
-
-    @abstractmethod
-    def _mutants(self, current):
-        pass
-
-    @abstractmethod
-    def _bestOf(self, neighbors):
-        pass
 
 
 class Numeric(Problem):
@@ -99,7 +55,8 @@ class Numeric(Problem):
         self.__low = []
         self.__up = []
 
-    def createProblem(self):  ###
+
+    def setVariables(self):
         file_name = input("Enter the file name of a function: ")
         with open(file_name, "r") as file:
             self.__expression = file.readline()
@@ -116,7 +73,7 @@ class Numeric(Problem):
                 self.__low.append(l)
                 self.__up.append(u)
 
-    def _randomInit(self):  ###
+    def _randomInit(self):
         init = [random.uniform(self.__low[i], self.__up[i]) for i in range(0, len(self.__var_names))]
         return init  # Return a random initial point as a list of values
 
@@ -135,7 +92,7 @@ class Numeric(Problem):
             curCopy[i] += d
         return curCopy
 
-    def describeProblem(self):
+    def describe(self):
         print()
         print("Objective function:")
         print(self.__expression)
@@ -154,12 +111,12 @@ class Numeric(Problem):
         print()
         print("Mutation step size:", self._delta)
 
-    def displayResult(self):
+    def report(self):
         print()
         print("Solution found:")
         print(self.__coordinate(self._solution))  # Convert list to tuple
         print("Minimum value: {0:,.3f}".format(self._objective_value))
-        super().displayResult()
+        super().report()
 
     def _mutants(self, current):  ###
         neighbors = [self.__mutate(current, i, self._delta) for i in range(len(self.__var_names))]
@@ -220,7 +177,7 @@ class Tsp(Problem):
         self.__locations = []
         self.__table = []
 
-    def createProblem(self):
+    def setVariables(self):
         ## Read in a TSP (# of cities, locatioins) from a file.
         ## Then, create a problem instance and return it.
         fileName = input("Enter the file name of a TSP: ")
@@ -271,7 +228,7 @@ class Tsp(Problem):
             j -= 1
         return curCopy
 
-    def describeProblem(self):
+    def describe(self):
         print()
         n = self.__num_cities
         print("Number of cities:", n)
@@ -288,12 +245,12 @@ class Tsp(Problem):
             if i % 10 == 9:
                 print()
 
-    def displayResult(self):
+    def report(self):
         print()
         print("Best order of visits:")
         self.__tenPerRow()  # Print 10 cities per row
-        print("Minimum tour cost: {0:,}".format(round(self._objective_value)))
-        super().displayResult()
+        print("Minimum tour cost: {0:,}".format(round(self._value)))
+        super().report()
 
     def _randomMutant(self, current):  # Apply inversion
         while True:
