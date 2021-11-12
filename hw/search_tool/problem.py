@@ -3,10 +3,12 @@ import random
 import math
 import numpy as np
 from abc import abstractmethod
+from setup import Setup
 
 
-class Problem:
+class Problem(Setup):
     def __init__(self):
+        super().__init__()
         # Evaluations
         self._num_eval = 0
         # Solution (local min)
@@ -56,10 +58,6 @@ class Numeric(Problem):
         self._low = []
         self._up = []
 
-        self._delta = 0.01
-        self._alpha = 0.01
-        self._dx = 10 ** (-4)
-
     def setVariables(self):
         file_name = input("Enter the file name of a function: ")
         with open(file_name, "r") as file:
@@ -76,15 +74,6 @@ class Numeric(Problem):
                     l, u = u, l
                 self._low.append(l)
                 self._up.append(u)
-
-    def getDelta(self):
-        return self._delta
-
-    def getAlpha(self):
-        return self._alpha
-
-    def getDx(self):
-        return self._dx
 
     def randomInit(self):
         init = [random.uniform(self._low[i], self._up[i]) for i in range(0, len(self._var_names))]
@@ -180,7 +169,7 @@ class Tsp(Problem):
     def calcDistance(p1, p2):
         return math.sqrt((p1[0] - p2[0]) ** 2 + (p1[1] - p2[1]) ** 2)
 
-    def calcDistanceTable(self):  ###
+    def calcDistanceTable(self):
         table = [
             [self.calcDistance(self._locations[i], self._locations[j])
              for j in range(0, self._num_cities)]
