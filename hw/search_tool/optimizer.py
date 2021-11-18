@@ -9,7 +9,7 @@ class HillClimbing(Setup):
         super().__init__()
         self._limitStuck = 100
 
-    def setVariables(self, problem):
+    def setVariables(self, parameters):
         self._problem = problem
 
     @abstractmethod

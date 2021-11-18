@@ -16,9 +16,8 @@ class Problem(Setup):
         # Cost
         self._value = 0
 
-    @abstractmethod
-    def setVariables(self):
-        pass
+    def setVariables(self, parameters):
+        self._pFileName = parameters["pFileName"]
 
     @abstractmethod
     def randomInit(self):
@@ -58,9 +57,9 @@ class Numeric(Problem):
         self._low = []
         self._up = []
 
-    def setVariables(self):
-        file_name = input("Enter the file name of a function: ")
-        with open(file_name, "r") as file:
+    def setVariables(self, parameters):
+        super().setVariables(parameters)
+        with open(_pFileName, "r") as file:
             self._expression = file.readline()
             self._var_names = []
             self._up = []
@@ -150,11 +149,11 @@ class Tsp(Problem):
         self._locations = []
         self._table = []
 
-    def setVariables(self):
+    def setVariables(self, parameters):
+        super().setVariables(parameters)
         ## Read in a TSP (# of cities, locatioins) from a file.
         ## Then, create a problem instance and return it.
-        fileName = input("Enter the file name of a TSP: ")
-        infile = open(fileName, 'r')
+        infile = open(_pFileName, 'r')
         # First line is number of cities
         self._num_cities = int(infile.readline())
         self._locations = []
