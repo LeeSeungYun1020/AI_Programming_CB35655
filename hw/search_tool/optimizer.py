@@ -4,16 +4,33 @@ from setup import Setup
 from problem import Numeric
 
 
-class HillClimbing(Setup):
+class Optimizer(Setup):
     def __init__(self):
         super().__init__()
-        self._limitStuck = 100
+        self._pType = 0
+        self._aType = 0
+        self._numExp = 0
 
     def setVariables(self, parameters):
-        self._problem = problem
+        self._pType = parameters["pType"]
+        self._aType = parameters["aType"]
+        self._numExp = parameters["numExp"]
+        self._delta = parameters["delta"]
+        self._alpha = parameters["alpha"]
+        self._dx = parameters["dx"]
+
+    def getAType(self):
+        return self._aType
+
+    def getNumExp(self):
+        return self._numExp
+
+    def displayNumExp(self):
+        print()
+        print("Number of experiments:", self._numExp)
 
     @abstractmethod
-    def run(self):
+    def run(self, p):
         pass
 
     @abstractmethod
@@ -21,54 +38,76 @@ class HillClimbing(Setup):
         pass
 
 
-class FirstChoice(HillClimbing):
+class HillClimbing(Optimizer):
+    def __init__(self):
+        super().__init__()
+        self._numRestart = 0
 
-    def run(self):
-        current = self._problem.randomInit()  # 'current' is a list of values
-        valueC = self._problem.evaluate(current)
+    def setVariables(self, parameters):
+        super().setVariables(parameters)
+        self._numRestart = parameters["numRestart"]
+
+    def displaySetting(self):
+        if self._pType == 1:  # Numerical Problem
+            print()
+            print("Mutation step size:", self._delta)
+
+    def randomRestart(self, p):
+        for i in range(self._numRestart):
+            self.run(p)
+
+
+class FirstChoice(HillClimbing):
+    def __init__(self):
+        super().__init__()
+        self._limitStuck = 0
+
+    def setVariables(self, parameters):
+        super().setVariables(parameters)
+        self._limitStuck = parameters["limitStuck"]
+
+    def run(self, p):
+        current = p.randomInit()  # 'current' is a list of values
+        valueC = p.evaluate(current)
         i = 0
         while i < self._limitStuck:
-            successor = self._problem.randomMutant(current)
-            valueS = self._problem.evaluate(successor)
+            successor = p.randomMutant(current)
+            valueS = p.evaluate(successor)
             if valueS < valueC:
                 current = successor
                 valueC = valueS
                 i = 0
             else:
                 i += 1
-        self._problem.storeResult(current, valueC)
+        p.storeResult(current, valueC)
 
     def displaySetting(self):
         print()
         print("Search algorithm: First-Choice Hill Climbing")
-        if isinstance(self._problem, Numeric):
-            print()
-            print("Mutation step size:", self._delta)
+        super().displaySetting()
         print("Max evaluations with no improvement: {0:,} iterations"
               .format(self._limitStuck))
 
 
 class SteepestAscent(HillClimbing):
 
-    def run(self):
-        current = self._problem.randomInit()  # 'current' is a list of values
-        valueC = self._problem.evaluate(current)
+    def run(self, p):
+        current = p.randomInit()  # 'current' is a list of values
+        valueC = p.evaluate(current)
         while True:
-            neighbors = self._problem.mutants(current)
-            (successor, valueS) = self.bestOf(neighbors, self._problem)
+            neighbors = p.mutants(current)
+            (successor, valueS) = self.bestOf(neighbors, p)
             if valueS >= valueC:
                 break
             else:
                 current = successor
                 valueC = valueS
-        self._problem.storeResult(current, valueC)
+        p.storeResult(current, valueC)
 
     def displaySetting(self):
         print()
         print("Search algorithm: Steepest-Ascent Hill Climbing")
-        if isinstance(self._problem, Numeric):
-            print()
-            print("Mutation step size:", self._delta)
+        super().displaySetting()
 
     @staticmethod
     def bestOf(neighbors, p):
@@ -79,19 +118,19 @@ class SteepestAscent(HillClimbing):
 
 
 class GradientDescent(HillClimbing):
-    def run(self):
-        current = self._problem.randomInit()  # Current point
-        current_value = self._problem.evaluate(current)
+    def run(self, p):
+        current = p.randomInit()  # Current point
+        current_value = p.evaluate(current)
 
         while True:
-            next_point = self._problem.takeStep(current, current_value)
-            next_value = self._problem.evaluate(next_point)
+            next_point = p.takeStep(current, current_value)
+            next_value = p.evaluate(next_point)
             if next_value >= current_value:
                 break
             else:
                 current = next_point
                 current_value = next_value
-        self._problem.storeResult(current, current_value)
+        p.storeResult(current, current_value)
 
     def displaySetting(self):
         print()

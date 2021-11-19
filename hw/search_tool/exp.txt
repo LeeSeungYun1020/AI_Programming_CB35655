@@ -2,13 +2,13 @@
 # Select the problem type:
 #    1. Numerical Optimization
 #    2. TSP
-   Enter the number (pType) : 2
+   Enter the number (pType) : 1 #2
 #
-#   Enter the name of the file : problem/Convex.txt
+   Enter the name of the file : problem/Convex.txt
 #   Enter the name of the file : problem/Griewank.txt
 #   Enter the name of the file : problem/Ackley.txt
 #   Enter the name of the file : problem/tsp30.txt
-   Enter the name of the file : problem/tsp50.txt
+#   Enter the name of the file : problem/tsp50.txt
 #   Enter the name of the file : problem/tsp100.txt
 #
 # Select the search algorithm:
@@ -19,7 +19,7 @@
 #    4. Gradient Descent
 #  Metaheuristic algorithms:
 #    5. Simulated Annealing
-   Enter the number (aType ) : 5
+   Enter the number (aType ) : 1 #5
 #
 # If you are solving a function optimization problem,
 #   what should be the step size for axis-parallel mutation?
@@ -37,11 +37,11 @@
 # If you want a random-restart hill climbing,
 # enter the number of restart. 
 # Enter 1 if you do not want a random-restart.
-   Number of restarts (numRestart) : 10
+   Number of restarts (numRestart) : 2 #10
 #
 # If you are running a metaheuristic algorithm,
 #   what should be the total number of evaluations until temination?
   Enter the number (limitEval) : 50000
 #
 # Enter the total number of experiments
-   Enter the number (numExp) : 5
+   Enter the number (numExp) : 2 # 5

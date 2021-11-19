@@ -73,7 +73,9 @@ def createOptimizer(parameters):  ###
     aType = parameters["aType"]
     optimizers = {1: 'SteepestAscent()',
                   2: 'FirstChoice()',
-                  3: 'GradientDescent()'}
+                  3: 'Stochastic()',
+                  4: 'GradientDescent()',
+                  5: 'SimulatedAnnealing()'}
     alg = eval(optimizers[aType])
     alg.setVariables(parameters)
     return alg

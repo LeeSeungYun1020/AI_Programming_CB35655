@@ -15,9 +15,26 @@ class Problem(Setup):
         self._solution = []
         # Cost
         self._value = 0
+        self._pFileName = ""
+
+        self._bestSolution = 0
+        self._bestMinimum = 0
+        self._avgMinimum = 0
+        self._avgNumEval = 0
+        self._sumOfNumEval = 0
+        self._avgWhen = 0
 
     def setVariables(self, parameters):
         self._pFileName = parameters["pFileName"]
+
+    def getNumEval(self):
+        return self._num_eval
+
+    def getSolution(self):
+        return self._solution
+
+    def getValue(self):
+        return self._value
 
     @abstractmethod
     def randomInit(self):
@@ -43,6 +60,10 @@ class Problem(Setup):
         self._solution = solution
         self._value = value
 
+    def storeExpResult(self, results):
+        (self._bestSolution, self._bestMinimum, self._avgMinimum,
+         self._avgNumEval, self._sumOfNumEval, self._avgWhen) = results
+
     @abstractmethod
     def report(self):
         print()
@@ -59,7 +80,7 @@ class Numeric(Problem):
 
     def setVariables(self, parameters):
         super().setVariables(parameters)
-        with open(_pFileName, "r") as file:
+        with open(self._pFileName, "r") as file:
             self._expression = file.readline()
             self._var_names = []
             self._up = []
@@ -153,7 +174,7 @@ class Tsp(Problem):
         super().setVariables(parameters)
         ## Read in a TSP (# of cities, locatioins) from a file.
         ## Then, create a problem instance and return it.
-        infile = open(_pFileName, 'r')
+        infile = open(self._pFileName, 'r')
         # First line is number of cities
         self._num_cities = int(infile.readline())
         self._locations = []
