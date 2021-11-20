@@ -1,9 +1,10 @@
 # 201645825 이승윤
 import math
+import os
+import os.path
 import random
 from abc import abstractmethod
 from setup import Setup
-from problem import Numeric
 
 
 class Optimizer(Setup):
@@ -31,14 +32,14 @@ class Optimizer(Setup):
         print()
         print("Number of experiments:", self._numExp)
 
+    def displaySetting(self):
+        if self._pType == 1 and self._aType != 4:  # Numerical Problem except gradient descent
+            print()
+            print("Mutation step size:", self._delta)
+
     @abstractmethod
     def run(self, p):
         pass
-
-    def displaySetting(self):
-        if self._pType == 1:  # Numerical Problem
-            print()
-            print("Mutation step size:", self._delta)
 
 
 class HillClimbing(Optimizer):
@@ -61,12 +62,27 @@ class HillClimbing(Optimizer):
         self.run(p)
         bestSolution = p.getSolution()
         bestMin = p.getValue()
+
+        if os.path.isfile("tem_re.txt") and self._pType == 2:
+            os.replace("tem_re.txt", "tem.txt")
+
         for i in range(1, self._numRestart):
             self.run(p)
             if bestMin > p.getValue():
                 bestSolution = p.getSolution()
                 bestMin = p.getValue()
+
+                if os.path.isfile("tem_re.txt") and self._pType == 2:
+                    os.replace("tem_re.txt", "tem.txt")
+
+        if os.path.isfile("tem_re.txt"):
+            os.remove("tem_re.txt")
+
         p.storeResult(bestSolution, bestMin)
+
+    @abstractmethod
+    def run(self, p):
+        pass
 
 
 class FirstChoice(HillClimbing):
@@ -75,6 +91,7 @@ class FirstChoice(HillClimbing):
         current = p.randomInit()  # 'current' is a list of values
         valueC = p.evaluate(current)
         i = 0
+        file = open("tem_re.txt", "w")
         while i < self._limitStuck:
             successor = p.randomMutant(current)
             valueS = p.evaluate(successor)
@@ -84,6 +101,8 @@ class FirstChoice(HillClimbing):
                 i = 0
             else:
                 i += 1
+            file.write("{:.3f}\n".format(valueC))
+        file.close()
         p.storeResult(current, valueC)
 
     def displaySetting(self):
@@ -168,6 +187,8 @@ class Stochastic(HillClimbing):
         print()
         print("Search algorithm: Stochastic Hill Climbing")
         super().displaySetting()
+        print("Max evaluations with no improvement: {0:,} iterations"
+              .format(self._limitStuck))
 
     # Stochastic hill climbing generates multiple neighbors and then selects
     # one from them at random by a probability proportional to the quality.
@@ -191,9 +212,14 @@ class Stochastic(HillClimbing):
 
 
 class MetaHeuristics(Optimizer):
+
     def __init__(self):
         super().__init__()
         self._limitEval = 0
+        self._whenBestFound = 0
+
+    def getWhenBestFound(self):
+        return self._whenBestFound
 
     def setVariables(self, parameters):
         super().setVariables(parameters)
@@ -204,14 +230,47 @@ class MetaHeuristics(Optimizer):
         print("Number of limit evaluations:", self._limitEval)
         super().displaySetting()
 
-
-class SimulatedAnnealing(MetaHeuristics):
+    @abstractmethod
     def run(self, p):
         pass
 
+
+class SimulatedAnnealing(MetaHeuristics):
+
+    def __init__(self):
+        super().__init__()
+        self._numSample = 10
+
+    def run(self, p):
+        current = p.randomInit()
+        valueC = p.evaluate(current)
+        temp = self.initTemp(p)
+
+        file = ""
+        if self._pType == 2:
+            file = open("tem.txt", "w")
+
+        while p.getNumEval() < self._limitEval:
+            temp = self.tSchedule(temp)
+            if temp == 0:
+                break  # return current
+            successor = p.randomMutant(current)
+            valueS = p.evaluate(successor)
+            dE = valueS - valueC
+            if dE < 0 or random.random() < math.exp(-dE / temp):
+                current = successor
+                valueC = valueS
+                self._whenBestFound = p.getNumEval()
+
+            if file:
+                file.write("{:.3f}\n".format(valueC))
+        if file:
+            file.close()
+        p.storeResult(current, valueC)
+
     def displaySetting(self):
         print()
-        print("Search algorithm: Simulated Annealing Metaheuristic")
+        print("Search algorithm: Simulated Annealing Meta-heuristic")
         super().displaySetting()
 
     # Simulated annealing calls the following methods.

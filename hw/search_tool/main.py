@@ -14,7 +14,6 @@ def main():
 
 def readPlanAndCreate():
     parameters = readValidPlan()  # Read and store in 'parameters'
-    print("Log", parameters)
     p = createProblem(parameters)
     alg = createOptimizer(parameters)
     return p, alg
@@ -96,6 +95,11 @@ def conductExperiment(p, alg):
     if 5 <= aType <= 6:
         sumOfWhen = alg.getWhenBestFound()
     numExp = alg.getNumExp()
+
+    algFileName = "alg{}.txt".format(aType)
+    if os.path.isfile("tem.txt"):
+        os.replace("tem.txt", algFileName)
+
     for i in range(1, numExp):
         if 1 <= aType <= 4:
             alg.randomRestart(p)
@@ -111,6 +115,10 @@ def conductExperiment(p, alg):
         if newMinimum < bestMinimum:
             bestSolution = newSolution  # Update the best-so-far
             bestMinimum = newMinimum
+
+            if os.path.isfile("tem.txt"):
+                os.replace("tem.txt", algFileName)
+
     avgMinimum = sumOfMinimum / numExp
     avgNumEval = round(sumOfNumEval / numExp)
     avgWhen = round(sumOfWhen / numExp)
@@ -118,5 +126,7 @@ def conductExperiment(p, alg):
                avgNumEval, sumOfNumEval, avgWhen)
     p.storeExpResult(results)
 
+    if os.path.isfile("tem.txt"):
+        os.remove("tem.txt")
 
 main()

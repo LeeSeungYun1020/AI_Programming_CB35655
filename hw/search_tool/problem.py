@@ -36,9 +36,10 @@ class Problem(Setup):
     def getValue(self):
         return self._value
 
-    @abstractmethod
     def randomInit(self):
-        pass
+        self._num_eval = 0
+        self._solution = []
+        self._value = 0
 
     @abstractmethod
     def evaluate(self, current):
@@ -103,6 +104,7 @@ class Numeric(Problem):
                 self._up.append(u)
 
     def randomInit(self):
+        super().randomInit()
         init = [random.uniform(self._low[i], self._up[i]) for i in range(0, len(self._var_names))]
         return init  # Return a random initial point as a list of values
 
@@ -204,6 +206,7 @@ class Tsp(Problem):
         self._table = table  # A symmetric matrix of pairwise distances
 
     def randomInit(self):  # Return a random initial tour
+        super().randomInit()
         init = list(range(self._num_cities))
         random.shuffle(init)
         return init
@@ -212,7 +215,6 @@ class Tsp(Problem):
         ## Calculate the tour cost of 'current'
         ## 'current' is a list of city ids
         self._num_eval += 1
-
         cost = 0
         for i in range(len(current) - 1):
             cost += self._table[current[i]][current[i + 1]]
