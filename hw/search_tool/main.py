@@ -14,7 +14,7 @@ def main():
 
 def readPlanAndCreate():
     parameters = readValidPlan()  # Read and store in 'parameters'
-    print(parameters)
+    print("Log", parameters)
     p = createProblem(parameters)
     alg = createOptimizer(parameters)
     return p, alg

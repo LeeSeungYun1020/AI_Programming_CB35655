@@ -17,7 +17,7 @@ class Problem(Setup):
         self._value = 0
         self._pFileName = ""
 
-        self._bestSolution = 0
+        self._bestSolution = []
         self._bestMinimum = 0
         self._avgMinimum = 0
         self._avgNumEval = 0
@@ -64,10 +64,17 @@ class Problem(Setup):
         (self._bestSolution, self._bestMinimum, self._avgMinimum,
          self._avgNumEval, self._sumOfNumEval, self._avgWhen) = results
 
-    @abstractmethod
     def report(self):
         print()
-        print("Total number of evaluations: {0:,}".format(self._num_eval))
+        print("Average objective value: {0:,.3f}".format(self._avgMinimum))
+        print("Average number of evaluations: {0:,}".format(self._avgNumEval))
+        self.reportDetail()
+        print()
+        print("Total number of evaluations: {0:,}".format(self._sumOfNumEval))
+
+    @abstractmethod
+    def reportDetail(self):
+        pass
 
 
 class Numeric(Problem):
@@ -125,7 +132,7 @@ class Numeric(Problem):
         return self.mutate(current, i, d)  # Return a random successor
 
     def takeStep(self, current, current_value):
-        change = current - self._alpha * self.gradient(current, current_value)  # delta = alpha(learning rate)
+        change = current - self._alpha * self.gradient(current, current_value)
         if self.isLegal(change):
             current = change
         return current
@@ -150,15 +157,14 @@ class Numeric(Problem):
         for i in range(len(self._var_names)):
             print(" " + self._var_names[i] + ":", (self._low[i], self._up[i]))
 
-    def report(self):
+    def reportDetail(self):
         print()
         print("Solution found:")
         print(self.coordinate())  # Convert list to tuple
-        print("Minimum value: {0:,.3f}".format(self._value))
-        super().report()
+        print("Minimum value: {0:,.3f}".format(self._bestMinimum))
 
     def coordinate(self):
-        c = [round(value, 3) for value in self._solution]
+        c = [round(value, 3) for value in self._bestSolution]
         return tuple(c)  # Convert the list to a tuple
 
 
@@ -255,15 +261,14 @@ class Tsp(Problem):
             if i % 5 == 4:
                 print()
 
-    def report(self):
+    def reportDetail(self):
         print()
         print("Best order of visits:")
         self.tenPerRow()  # Print 10 cities per row
-        print("Minimum tour cost: {0:,}".format(round(self._value)))
-        super().report()
+        print("Minimum tour cost: {0:,}".format(round(self._bestMinimum)))
 
     def tenPerRow(self):
-        for i in range(len(self._solution)):
-            print("{0:>5}".format(self._solution[i]), end='')
+        for i in range(len(self._bestSolution)):
+            print("{0:>5}".format(self._bestSolution[i]), end='')
             if i % 10 == 9:
                 print()
