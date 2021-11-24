@@ -11,19 +11,12 @@ class Optimizer(Setup):
     def __init__(self):
         super().__init__()
         self._pType = 0
-        self._aType = 0
         self._numExp = 0
 
     def setVariables(self, parameters):
+        super().setVariables(parameters)
         self._pType = parameters["pType"]
-        self._aType = parameters["aType"]
         self._numExp = parameters["numExp"]
-        self._delta = parameters["delta"]
-        self._alpha = parameters["alpha"]
-        self._dx = parameters["dx"]
-
-    def getAType(self):
-        return self._aType
 
     def getNumExp(self):
         return self._numExp

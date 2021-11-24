@@ -25,6 +25,7 @@ class Problem(Setup):
         self._avgWhen = 0
 
     def setVariables(self, parameters):
+        super().setVariables(parameters)
         self._pFileName = parameters["pFileName"]
 
     def getNumEval(self):
