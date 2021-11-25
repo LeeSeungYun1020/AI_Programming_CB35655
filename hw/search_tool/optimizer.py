@@ -26,8 +26,7 @@ class Optimizer(Setup):
         print("Number of experiments:", self._numExp)
 
     def displaySetting(self):
-        if self._pType == 1 and self._aType != 4:  # Numerical Problem except gradient descent
-            print()
+        if self._pType == 1 and self._aType != 4 and self._aType != 6:  # Numerical Problem except gradient descent
             print("Mutation step size:", self._delta)
 
     @abstractmethod
@@ -47,8 +46,9 @@ class HillClimbing(Optimizer):
         self._limitStuck = parameters["limitStuck"]
 
     def displaySetting(self):
-        print()
-        print("Number of random restarts:", self._numRestart)
+        if self._numRestart > 1:
+            print("Number of random restarts:", self._numRestart)
+            print()
         super().displaySetting()
 
     def randomRestart(self, p):
@@ -190,14 +190,14 @@ class Stochastic(HillClimbing):
     def stochasticBest(self, neighbors, p):
         # Smaller values are better in the following list
         valuesForMin = [p.evaluate(indiv) for indiv in neighbors]
-        largeValue = max(valuesForMin) + 1
+        largeValue = max(valuesForMin) + 1 # avoid 0
         valuesForMax = [largeValue - val for val in valuesForMin]
         # Now, larger values are better
         total = sum(valuesForMax)
         randValue = random.uniform(0, total)
         s = valuesForMax[0]
         for i in range(len(valuesForMax)):
-            if randValue <= s:  # The one with index i is chosen
+            if randValue <= s:  # The one with index i is chosen / 해당 구간에 속하면
                 break
             else:
                 s += valuesForMax[i + 1]
@@ -219,9 +219,8 @@ class MetaHeuristics(Optimizer):
         self._limitEval = parameters["limitEval"]
 
     def displaySetting(self):
-        print()
-        print("Number of limit evaluations:", self._limitEval)
         super().displaySetting()
+        print("Number of evaluations until termination: {:,}".format(self._limitEval))
 
     @abstractmethod
     def run(self, p):
@@ -232,38 +231,47 @@ class SimulatedAnnealing(MetaHeuristics):
 
     def __init__(self):
         super().__init__()
-        self._numSample = 10
+        self._numSample = 100
 
     def run(self, p):
         current = p.randomInit()
         valueC = p.evaluate(current)
+        best, valueBest = current, valueC
+        whenBestFound = i = 1
         temp = self.initTemp(p)
 
         file = ""
         if self._pType == 2:
             file = open("tem.txt", "w")
 
-        while p.getNumEval() < self._limitEval:
+        while True:
             temp = self.tSchedule(temp)
-            if temp == 0:
+            if temp == 0 or i == self._limitEval:
                 break  # return current
-            successor = p.randomMutant(current)
-            valueS = p.evaluate(successor)
-            dE = valueS - valueC
+            neighbor = p.randomMutant(current)
+            valueN = p.evaluate(neighbor)
+            i += 1
+            dE = valueN - valueC
+
             if dE < 0 or random.random() < math.exp(-dE / temp):
-                current = successor
-                valueC = valueS
-                self._whenBestFound = p.getNumEval()
+                current = neighbor
+                valueC = valueN
+
+            if valueC < valueBest:
+                best, valueBest = current, valueC
+                whenBestFound = i
 
             if file:
                 file.write("{:.3f}\n".format(valueC))
         if file:
             file.close()
-        p.storeResult(current, valueC)
+        self._whenBestFound = whenBestFound
+        p.storeResult(best, valueBest)
 
     def displaySetting(self):
         print()
-        print("Search algorithm: Simulated Annealing Meta-heuristic")
+        print("Search algorithm: Simulated Annealing")
+        print()
         super().displaySetting()
 
     # Simulated annealing calls the following methods.

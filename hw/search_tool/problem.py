@@ -67,16 +67,16 @@ class Problem(Setup):
          self._avgNumEval, self._sumOfNumEval, self._avgWhen) = results
 
     def report(self):
-        print()
-        print("Average objective value: {0:,.3f}".format(self._avgMinimum))
-        print("Average number of evaluations: {0:,}".format(self._avgNumEval))
-        self.reportDetail()
-        print()
-        print("Total number of evaluations: {0:,}".format(self._sumOfNumEval))
+        if 1 <= self._aType <= 4:
+            print("Average number of evaluations: {0:,}".format(round(self._avgNumEval)))
+        if 5 <= self._aType <= 6:
+            print("Average iteration of finding the best: {0:,}".format(self._avgWhen))
 
-    @abstractmethod
-    def reportDetail(self):
-        pass
+
+    def reportNumEvals(self):
+        if 1 <= self._aType <= 4:
+            print()
+            print("Total number of evaluations: {0:,}".format(self._sumOfNumEval))
 
 
 class Numeric(Problem):
@@ -160,11 +160,14 @@ class Numeric(Problem):
         for i in range(len(self._var_names)):
             print(" " + self._var_names[i] + ":", (self._low[i], self._up[i]))
 
-    def reportDetail(self):
+    def report(self):
         print()
-        print("Solution found:")
+        print("Average objective value: {0:,.3f}".format(self._avgMinimum))
+        super().report()
+        print("Best solution found:")
         print(self.coordinate())  # Convert list to tuple
-        print("Minimum value: {0:,.3f}".format(self._bestMinimum))
+        print("Best value: {0:,.3f}".format(self._bestMinimum))
+        self.reportNumEvals()
 
     def coordinate(self):
         c = [round(value, 3) for value in self._bestSolution]
@@ -264,11 +267,14 @@ class Tsp(Problem):
             if i % 5 == 4:
                 print()
 
-    def reportDetail(self):
+    def report(self):
         print()
-        print("Best order of visits:")
+        print("Average tour cost: {0:,}".format(round(self._avgMinimum)))
+        super().report()
+        print("Best tour found:")
         self.tenPerRow()  # Print 10 cities per row
-        print("Minimum tour cost: {0:,}".format(round(self._bestMinimum)))
+        print("Best tour cost: {0:,}".format(round(self._bestMinimum)))
+        self.reportNumEvals()
 
     def tenPerRow(self):
         for i in range(len(self._bestSolution)):
