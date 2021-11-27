@@ -30,9 +30,8 @@ class Optimizer(Setup):
             print()
             print("Mutation step size:", self._delta)
 
-    @abstractmethod
     def run(self, p):
-        pass
+        p.initProblem()
 
 
 class HillClimbing(Optimizer):
@@ -73,14 +72,14 @@ class HillClimbing(Optimizer):
 
         p.storeResult(bestSolution, bestMin)
 
-    @abstractmethod
     def run(self, p):
-        pass
+        super().run(p)
 
 
 class FirstChoice(HillClimbing):
 
     def run(self, p):
+        super().run(p)
         current = p.randomInit()  # 'current' is a list of values
         valueC = p.evaluate(current)
         i = 0
@@ -109,6 +108,7 @@ class FirstChoice(HillClimbing):
 class SteepestAscent(HillClimbing):
 
     def run(self, p):
+        super().run(p)
         current = p.randomInit()  # 'current' is a list of values
         valueC = p.evaluate(current)
         while True:
@@ -137,6 +137,7 @@ class SteepestAscent(HillClimbing):
 class GradientDescent(HillClimbing):
 
     def run(self, p):
+        super().run(p)
         current = p.randomInit()  # Current point
         current_value = p.evaluate(current)
 
@@ -162,6 +163,7 @@ class GradientDescent(HillClimbing):
 class Stochastic(HillClimbing):
 
     def run(self, p):
+        super().run(p)
         current = p.randomInit()  # 'current' is a list of values
         valueC = p.evaluate(current)
         i = 0
@@ -223,9 +225,8 @@ class MetaHeuristics(Optimizer):
         print("Number of limit evaluations:", self._limitEval)
         super().displaySetting()
 
-    @abstractmethod
     def run(self, p):
-        pass
+        super().run(p)
 
 
 class SimulatedAnnealing(MetaHeuristics):
@@ -235,6 +236,7 @@ class SimulatedAnnealing(MetaHeuristics):
         self._numSample = 10
 
     def run(self, p):
+        super().run(p)
         current = p.randomInit()
         valueC = p.evaluate(current)
         temp = self.initTemp(p)
@@ -285,3 +287,49 @@ class SimulatedAnnealing(MetaHeuristics):
 
     def tSchedule(self, t):
         return t * (1 - (1 / 10 ** 4))
+
+
+class GA(MetaHeuristics):
+
+    def __init__(self):
+        MetaHeuristics.__init__(self)
+        self._popSize = 0  # Population size
+        self._uXp = 0  # Probability of swappping a locus for Xover
+        self._mrF = 0  # Multiplication factor to 1/n for bit-flip mutation
+        self._XR = 0  # Crossover rate for permutation code
+        self._mR = 0  # Mutation rate for permutation code
+        self._pC = 0  # Probability parameter for Xover
+        self._pM = 0  # Probability parameter for mutation
+
+    def run(self, p):
+        super().run(p)
+
+    def setVariables(self, parameters):
+        MetaHeuristics.setVariables(self, parameters)
+        self._popSize = parameters['popSize']
+        self._uXp = parameters['uXp']
+        self._mrF = parameters['mrF']
+        self._XR = parameters['XR']
+        self._mR = parameters['mR']
+        if self._pType == 1:
+            self._pC = self._uXp
+            self._pM = self._mrF
+        if self._pType == 2:
+            self._pC = self._XR
+            self._pM = self._mR
+
+    def displaySetting(self):
+        print()
+        print("Search Algorithm: Genetic Algorithm")
+        print()
+        MetaHeuristics.displaySetting(self)
+        print()
+        print("Population size:", self._popSize)
+        if self._pType == 1:  # Numerical optimization
+            print("Number of bits for binary encoding:", self._resolution)
+            print("Swap probability for uniform crossover:", self._uXp)
+            print("Multiplication factor to 1/L for bit-flip mutation:",
+                  self._mrF)
+        elif self._pType == 2:  # TSP
+            print("Crossover rate:", self._XR)
+            print("Mutation rate:", self._mR)

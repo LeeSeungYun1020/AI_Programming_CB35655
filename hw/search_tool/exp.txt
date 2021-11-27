@@ -19,6 +19,7 @@
 #    4. Gradient Descent
 #  Metaheuristic algorithms:
 #    5. Simulated Annealing
+#    6. GA
    Enter the number (aType ) : 5
 #
 # If you are solving a function optimization problem,
