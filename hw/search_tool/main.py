@@ -98,9 +98,9 @@ def conductExperiment(p, alg):
         sumOfWhen = alg.getWhenBestFound()
     numExp = alg.getNumExp()
 
-    algFileName = "alg{}.txt".format(aType)
-    if os.path.isfile("tem.txt"):
-        os.replace("tem.txt", algFileName)
+    # algFileName = "alg{}.txt".format(aType)
+    # if os.path.isfile("tem.txt"):
+    #     os.replace("tem.txt", algFileName)
 
     for i in range(1, numExp):
         if 1 <= aType <= 4:
@@ -118,8 +118,8 @@ def conductExperiment(p, alg):
             bestSolution = newSolution  # Update the best-so-far
             bestMinimum = newMinimum
 
-            if os.path.isfile("tem.txt"):
-                os.replace("tem.txt", algFileName)
+            # if os.path.isfile("tem.txt"):
+            #     os.replace("tem.txt", algFileName)
 
     avgMinimum = sumOfMinimum / numExp
     avgNumEval = round(sumOfNumEval / numExp)
@@ -128,7 +128,7 @@ def conductExperiment(p, alg):
                avgNumEval, sumOfNumEval, avgWhen)
     p.storeExpResult(results)
 
-    if os.path.isfile("tem.txt"):
-        os.remove("tem.txt")
+    # if os.path.isfile("tem.txt"):
+    #     os.remove("tem.txt")
 
 main()

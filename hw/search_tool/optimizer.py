@@ -55,8 +55,8 @@ class HillClimbing(Optimizer):
         bestSolution = p.getSolution()
         bestMin = p.getValue()
 
-        if os.path.isfile("tem_re.txt") and self._pType == 2:
-            os.replace("tem_re.txt", "tem.txt")
+        # if os.path.isfile("tem_re.txt") and self._pType == 2:
+        #     os.replace("tem_re.txt", "tem.txt")
 
         for i in range(1, self._numRestart):
             self.run(p)
@@ -64,11 +64,11 @@ class HillClimbing(Optimizer):
                 bestSolution = p.getSolution()
                 bestMin = p.getValue()
 
-                if os.path.isfile("tem_re.txt") and self._pType == 2:
-                    os.replace("tem_re.txt", "tem.txt")
-
-        if os.path.isfile("tem_re.txt"):
-            os.remove("tem_re.txt")
+        #         if os.path.isfile("tem_re.txt") and self._pType == 2:
+        #             os.replace("tem_re.txt", "tem.txt")
+        #
+        # if os.path.isfile("tem_re.txt"):
+        #     os.remove("tem_re.txt")
 
         p.storeResult(bestSolution, bestMin)
 
@@ -83,7 +83,7 @@ class FirstChoice(HillClimbing):
         current = p.randomInit()  # 'current' is a list of values
         valueC = p.evaluate(current)
         i = 0
-        file = open("tem_re.txt", "w")
+        # file = open("tem_re.txt", "w")
         while i < self._limitStuck:
             successor = p.randomMutant(current)
             valueS = p.evaluate(successor)
@@ -93,8 +93,8 @@ class FirstChoice(HillClimbing):
                 i = 0
             else:
                 i += 1
-            file.write("{:.3f}\n".format(valueC))
-        file.close()
+        #     file.write("{:.3f}\n".format(valueC))
+        # file.close()
         p.storeResult(current, valueC)
 
     def displaySetting(self):
@@ -242,9 +242,9 @@ class SimulatedAnnealing(MetaHeuristics):
         whenBestFound = i = 1
         temp = self.initTemp(p)
 
-        file = ""
-        if self._pType == 2:
-            file = open("tem.txt", "w")
+        # file = ""
+        # if self._pType == 2:
+        #     file = open("tem.txt", "w")
 
         while True:
             temp = self.tSchedule(temp)
@@ -263,10 +263,10 @@ class SimulatedAnnealing(MetaHeuristics):
                 best, valueBest = current, valueC
                 whenBestFound = i
 
-            if file:
-                file.write("{:.3f}\n".format(valueC))
-        if file:
-            file.close()
+        #     if file:
+        #         file.write("{:.3f}\n".format(valueC))
+        # if file:
+        #     file.close()
         self._whenBestFound = whenBestFound
         p.storeResult(best, valueBest)
 
@@ -339,19 +339,6 @@ class GA(MetaHeuristics):
                     self._whenBestFound = p.getNumEval()
 
         p.storeResult(p.indToSol(best), best[0])
-
-        """
-        repeat
-        new_population ← empty set
-        for i = 1 to SIZE(population) do
-        (x, y) ← SELECT-PARENTS(population, FITNESS-FN)
-        child ← REPRODUCE(x, y)
-        if (small random probability) then child ← MUTATE(child)
-        add child to new_population
-        population ← new_population
-        until some individual is fit enough, or enough time has elapsed
-        return the best individual in population, according to FITNESS-FN
-        """
 
     def setVariables(self, parameters):
         MetaHeuristics.setVariables(self, parameters)
