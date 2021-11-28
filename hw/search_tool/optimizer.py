@@ -303,6 +303,47 @@ class GA(MetaHeuristics):
 
     def run(self, p):
         super().run(p)
+        population = p.initializePop(self._popSize)
+        best = population[0]
+        for i in range(len(population)):
+            p.evalInd(population[i])
+            if population[i][0] < best[0]:
+                best = population[i]
+
+        while p.getNumEval() < self._limitEval:
+            new_population = []
+            while len(new_population) < self._popSize:
+                pop_max = max([p[0] for p in population])
+                x, y = random.choices(population, k=2, weights=[pop_max + 1 - p[0] for p in population])
+                child1, child2 = p.crossover(x, y, self._pC)
+                p.mutation(child1, self._pM)
+                p.mutation(child2, self._pM)
+                p.evalInd(child1)
+                p.evalInd(child2)
+                new_population.append(child1)
+                new_population.append(child2)
+
+            population = new_population
+            for i in range(len(population)):
+                p.evalInd(population[i])
+                if population[i][0] < best[0]:
+                    best = population[i]
+                    self._whenBestFound = p.getNumEval()
+
+        p.storeResult(p.indToSol(best), best[0])
+
+        """
+        repeat
+        new_population ← empty set
+        for i = 1 to SIZE(population) do
+        (x, y) ← SELECT-PARENTS(population, FITNESS-FN)
+        child ← REPRODUCE(x, y)
+        if (small random probability) then child ← MUTATE(child)
+        add child to new_population
+        population ← new_population
+        until some individual is fit enough, or enough time has elapsed
+        return the best individual in population, according to FITNESS-FN
+        """
 
     def setVariables(self, parameters):
         MetaHeuristics.setVariables(self, parameters)

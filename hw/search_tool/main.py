@@ -34,8 +34,9 @@ def readPlan():
     fileName = input("Enter the file name of experimental setting: ")
     infile = open(fileName, 'r')
     parameters = {'pType': 0, 'pFileName': '', 'aType': 0, 'delta': 0,
-                  'limitStuck': 0, 'alpha': 0, 'dx': 0, 'numRestart': 0,
-                  'limitEval': 0, 'numExp': 0}
+                  'limitStuck': 0, 'alpha': 0, 'dx': 0, 'resolution': 0,
+                  'popSize': 0, 'uXp': 0, 'mrF': 0, 'XR': 0,
+                  'mR': 0, 'numRestart': 0, 'limitEval': 0, 'numExp': 0}
     parNames = list(parameters.keys())
     for i in range(len(parNames)):
         line = lineAfterComments(infile)

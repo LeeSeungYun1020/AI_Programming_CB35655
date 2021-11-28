@@ -183,7 +183,7 @@ class Numeric(Problem):
         return pop
 
     def randBinStr(self):
-        k = len(self._domain[0]) * self._resolution
+        k = len(self._var_names) * self._resolution
         chromosome = []
         for i in range(k):
             allele = random.randint(0, 1)
@@ -195,13 +195,13 @@ class Numeric(Problem):
 
     def decode(self, chromosome):
         r = self._resolution
-        low = self._domain[1]  # list of lower bounds
-        up = self._domain[2]  # list of upper bounds
+        low = self._low  # list of lower bounds
+        up = self._up  # list of upper bounds
         genotype = chromosome[:]
         phenotype = []
         start = 0
         end = r  # The following loop repeats for # variables
-        for var in range(len(self._domain[0])):
+        for var in range(len(self._var_names)):
             value = self.binaryToDecimal(genotype[start:end],
                                          low[var], up[var])
             phenotype.append(value)
@@ -349,7 +349,7 @@ class Tsp(Problem):
     # GA related code
 
     def initializePop(self, size):  # Make a population of given size
-        n = self._numCities  # n: number of cities
+        n = self._num_cities  # n: number of cities
         pop = []
         for i in range(size):
             chromosome = self.randomInit()
@@ -397,7 +397,7 @@ class Tsp(Problem):
         # pM is interpreted as mR (mutation rate for inversion)
         child = ind[:]  # Make copy
         if random.uniform(0, 1) <= mR:
-            i, j = sorted([random.randrange(self._numCities)
+            i, j = sorted([random.randrange(self._num_cities)
                            for _ in range(2)])
             child[1] = self.inversion(child[1], i, j)
         return child
