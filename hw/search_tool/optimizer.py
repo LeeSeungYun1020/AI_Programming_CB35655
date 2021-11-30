@@ -311,34 +311,53 @@ class GA(MetaHeuristics):
 
     def run(self, p):
         super().run(p)
+        # population: list of individuals
+        # individual: [fitness, chromosome]
         population = p.initializePop(self._popSize)
-        best = population[0]
-        for i in range(len(population)):
-            p.evalInd(population[i])
-            if population[i][0] < best[0]:
-                best = population[i]
+        best = self.evalAndFindBest(population, p)
 
         while p.getNumEval() < self._limitEval:
             new_population = []
             while len(new_population) < self._popSize:
-                pop_max = max([p[0] for p in population])
-                x, y = random.choices(population, k=2, weights=[pop_max + 1 - p[0] for p in population])
-                child1, child2 = p.crossover(x, y, self._pC)
+                parent1, parent2 = self.selectParents(population)
+                child1, child2 = p.crossover(parent1, parent2, self._pC)
                 p.mutation(child1, self._pM)
                 p.mutation(child2, self._pM)
-                p.evalInd(child1)
-                p.evalInd(child2)
                 new_population.append(child1)
                 new_population.append(child2)
 
             population = new_population
-            for i in range(len(population)):
-                p.evalInd(population[i])
-                if population[i][0] < best[0]:
-                    best = population[i]
-                    self._whenBestFound = p.getNumEval()
+            new_best = self.evalAndFindBest(population, p)
+            if new_best[0] < best[0]:
+                best = new_best
+                self._whenBestFound = p.getNumEval()
 
-        p.storeResult(p.indToSol(best), best[0])
+        p.storeResult(p.indToSol(best), best[0]) # store bestSolution, bestValue
+
+    def evalAndFindBest(self, pop, p):
+        best = pop[0]
+        p.evalInd(best)
+        for i in range(1, len(pop)):
+            p.evalInd(pop[i])
+            if pop[i][0] < best[0]:
+                best = pop[i]
+        return best
+
+    def selectParents(self, pop):
+        ind1, ind2 = self.selectTwo(pop)
+        par1 = self.binaryTournament(ind1, ind2)
+        ind1, ind2 = self.selectTwo(pop)
+        par2 = self.binaryTournament(ind1, ind2)
+        return par1, par2
+
+    def selectTwo(self, pop):
+        return random.sample(pop, 2)
+
+    def binaryTournament(self, ind1, ind2):
+        if ind1[0] < ind2[0]:
+            return ind1
+        else:
+            return ind2
 
     def setVariables(self, parameters):
         MetaHeuristics.setVariables(self, parameters)
@@ -347,10 +366,10 @@ class GA(MetaHeuristics):
         self._mrF = parameters['mrF']
         self._XR = parameters['XR']
         self._mR = parameters['mR']
-        if self._pType == 1:
+        if self._pType == 1: # Numerical optimization
             self._pC = self._uXp
             self._pM = self._mrF
-        if self._pType == 2:
+        if self._pType == 2: # TSP
             self._pC = self._XR
             self._pM = self._mR
 

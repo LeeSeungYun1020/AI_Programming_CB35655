@@ -6,7 +6,7 @@ class Setup:
         self._delta = 0.01
         self._alpha = 0.01
         self._dx = 10 ** (-4)
-        self._resolution = 100
+        self._resolution = 10
 
     def setVariables(self, parameters):
         self._aType = parameters["aType"]

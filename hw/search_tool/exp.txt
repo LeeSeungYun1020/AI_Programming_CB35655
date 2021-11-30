@@ -2,14 +2,14 @@
 # Select the problem type:
 #    1. Numerical Optimization
 #    2. TSP
-   Enter the number (pType) : 2
+   Enter the number (pType) : 1
 #
 #   Enter the name of the file : problem/Convex.txt
 #   Enter the name of the file : problem/Griewank.txt
-#   Enter the name of the file : problem/Ackley.txt
+   Enter the name of the file : problem/Ackley.txt
 #   Enter the name of the file : problem/tsp30.txt
 #   Enter the name of the file : problem/tsp50.txt
-   Enter the name of the file : problem/tsp100.txt
+#   Enter the name of the file : problem/tsp100.txt
 #
 # Select the search algorithm:
 #  Hill Climbing algorithms:
@@ -39,9 +39,9 @@
    Enter the number (resolution) : 10
    Population size (popSize) : 100
    Probability of swapping a locus for Xover (uXp) : 0.2
-   Multiplication factor to 1/n for bit-flip mutation (mrF) : 0.1
-   Crossover rate for permutation code (XR) : 1
-   Mutation rate for permutation code (mR) : 0.1
+   Multiplication factor to 1/n for bit-flip mutation (mrF) : 0.1 #1
+   Crossover rate for permutation code (XR) : 1 # 0.1
+   Mutation rate for permutation code (mR) : 0.1 # 0.9
 #
 # If you want a random-restart hill climbing,
 # enter the number of restart. 
