@@ -59,7 +59,7 @@ class ML:
     def buildModel(self):
         pass
 
-    def testModel(self):  # Test linear regression with the test set
+    def testModel(self):  # Test model with the test set
         n = np.size(self._testDy)
         for i in range(n):
             self._testPy[i] = self.predict(self._testDX[i])
@@ -80,6 +80,7 @@ class ML:
             se = (self._testDy[i] - self._testPy[i]) ** 2
             totalSe += se
         self._rmse = np.sqrt(totalSe) / n
+        return self._rmse
 
 
 class LinearRegression(ML):
@@ -105,12 +106,13 @@ class LinearRegression(ML):
 
 
 class KNN(ML):
-    def __init__(self):
+    def __init__(self, k=0):
         super(KNN, self).__init__()
-        self._k = 0  # k value for k-NN
+        self._k = k  # k value for k-NN
 
     def buildModel(self):
-        self._k = int(input("Enter the value for k: "))
+        if self._k == 0:
+            self._k = int(input("Enter the value for k: "))
 
     ### Implement the following and other necessary methods
     def predict(self, query):
@@ -124,4 +126,5 @@ class KNN(ML):
         return np.mean([self._trainDy[it[0]] for it in pos])
 
 
-main()
+if __name__ == "__main__":
+    main()
