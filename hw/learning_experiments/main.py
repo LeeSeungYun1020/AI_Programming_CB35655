@@ -79,7 +79,7 @@ class ML:
         for i in range(n):
             se = (self._testDy[i] - self._testPy[i]) ** 2
             totalSe += se
-        self._rmse = np.sqrt(totalSe) / n
+        self._rmse = np.sqrt(totalSe / n)
         return self._rmse
 
 
